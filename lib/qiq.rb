@@ -1,4 +1,5 @@
 require_relative "qiq/version"
+require_relative "qiq/note"
 require_relative "qiq/commands"
 
 module Qiq

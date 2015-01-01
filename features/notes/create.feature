@@ -4,6 +4,7 @@ Feature: Create a note
   I want to create note on Qiq
 
   Scenario: User create inline note
+    Given I want to create a new note
     When I successfully run `qiq note --content "Cool note"`
     Then a note should be created on the server with:
       """
