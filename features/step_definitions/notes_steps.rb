@@ -1,4 +1,5 @@
 Given /^I want to create a new note$/ do
+  puts "Step definitions, PID: #{Process.pid}"
   stub_request(:post, "www.gropax.ninja/notes.json").to_return(status: 201)
 end
 

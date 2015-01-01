@@ -1,5 +1,5 @@
 module Qiq
-  module Commands
+  class Command
     class Note
       def create(*args, options)
         content = options.content
