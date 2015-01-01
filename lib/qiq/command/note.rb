@@ -1,8 +1,7 @@
 module Qiq
   class Command
     class Note
-      def create(*args, options)
-        content = options.content
+      def create(content, options)
         note = Qiq::Note.create({content: content})
         $stdout.puts "(Created note *#{note.id})"
       end

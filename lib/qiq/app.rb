@@ -20,9 +20,23 @@ module Qiq
         c.syntax = 'qiq note [options]'
         c.summary = 'Create note'
 
-        c.option 'c', '--content', 'Note content'
+        c.option '-e', '--editor [EDITOR]', 'Create note in text editor' do |editor|
+          e = editor.is_a?(String) ? editor : nil
+          @content = ask_editor('', e)
+        end
 
-        c.action Qiq::Command::Note, :create
+        c.option '-c', '--content STRING', 'Note content' do |content|
+          @content = content
+        end
+
+        c.option '-f', '--file FILE', 'Content from file' do |file|
+          @content = File.open(file).read
+        end
+
+        c.action do |args, options|
+          @content ||= $stdin.read
+          Qiq::Command::Note.new.create(@content, options)
+        end
       end
 
       run!
