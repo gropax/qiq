@@ -1,8 +1,12 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'commander/import'
+require_relative '../lib/qiq'
 
+require 'commander/import'
+#require File.expand_path("../lib/qiq", File.dirname(__FILE__))
+
+program :name, 'Qiq'
 program :version, '0.0.1'
 program :description, 'Manage notes with buffer and tag support'
 
@@ -11,8 +15,7 @@ command :note do |c|
   c.summary = 'Create note'
 
   c.option 'c', '--content', 'Note content'
-  c.action do |args, options|
-  end
+
   c.action Qiq::Commands::Note, :create
 end
 
