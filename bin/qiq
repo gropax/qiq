@@ -13,5 +13,6 @@ command :note do |c|
   c.option 'c', '--content', 'Note content'
   c.action do |args, options|
   end
+  c.action Qiq::Commands::Note, :create
 end
 
