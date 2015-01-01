@@ -6,7 +6,9 @@ Feature: Create a note
   Scenario: User create inline note
     When I successfully run `qiq note --content "Cool note"`
     Then a note should be created on the server with:
-      """Cool note"""
+      """
+      Cool note
+      """
     And the output should match /\(Created note *(\d+)\)/
 
   Scenario: User create note in buffer
@@ -25,14 +27,20 @@ Feature: Create a note
 
   Scenario: User create note from file
     Given a file named "note.txt" with:
-      """Cool note in a file"""
+      """
+      Cool note in a file
+      """
     When I successfully run `qiq note -f note.txt`
     Then a note should be created on the server with:
-      """Cool note in a file"""
+      """
+      Cool note in a file
+      """
 
   Scenario: User create note from pipe
     When I successfully run `echo "Note from pipe" | qiq note`
     Then a note should be created on the server with:
-      """Note from pipe"""
+      """
+      Note from pipe
+      """
 
   Scenario: User create note in Vim
