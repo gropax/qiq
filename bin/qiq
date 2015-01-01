@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+
+program :version, '0.0.1'
+program :description, 'Manage notes with buffer and tag support'
+
+command :note do |c|
+  c.syntax = 'qiq note [options]'
+  c.summary = 'Create note'
+
+  c.option 'c', '--content', 'Note content'
+  c.action do |args, options|
+  end
+end
+
