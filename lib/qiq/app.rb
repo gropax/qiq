@@ -72,6 +72,16 @@ module Qiq
         end
       end
 
+      command :"note list" do |c|
+        c.syntax = 'qiq note list [options]'
+        c.summary = 'List notes'
+
+        c.action do |args, options|
+          STDOUT.puts "List notes"
+          Qiq::Command::Note.new.list
+        end
+      end
+
       run!
     end
   end

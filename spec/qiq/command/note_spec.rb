@@ -8,14 +8,16 @@ class Qiq::Command
       {
         id: 123,
         content: "This is a cool note",
-        tags: [],
-        buffers: [],
-        created_at: Time.now.to_s,
-        updated_at: Time.now.to_s,
       }
     }
     let(:updated_note) {
       note.dup.tap { |n| n[:content] = "This is an updated note" }
+    }
+    let(:note2) {
+      {
+        id: 456,
+        content: "This is a second note",
+      }
     }
 
     describe "#create" do
@@ -89,6 +91,27 @@ class Qiq::Command
 
       it "writes the note to STDOUT" do
         expect(stdout.string).to match /Deleted note \*123/
+      end
+    end
+
+    describe "#list" do
+      before(:each) do
+        # GET /notes/123.json
+        stub_request(:get, "#{Qiq::SERVER}/notes.json").
+          to_return(body: [note, note2].to_json)
+
+        note_cmd.list
+      end
+
+      it "requests GET /notes.json" do
+        expect(WebMock).to have_requested(:get, "#{Qiq::SERVER}/notes.json")
+      end
+
+      it "writes all notes to STDOUT" do
+        expect(stdout.string).to match /\*123/
+        expect(stdout.string).to match /This is a cool note/
+        expect(stdout.string).to match /\*456/
+        expect(stdout.string).to match /This is a second note/
       end
     end
 

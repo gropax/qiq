@@ -14,7 +14,7 @@ module Qiq
       def print(note_id, options = nil)
         check_found {
           note = Qiq::Note.find(note_id)
-          @stdout.puts "Note *#{note.id}:\n#{note.content}"
+          @stdout.puts format_note(note)
         }
       end
 
@@ -34,7 +34,16 @@ module Qiq
         }
       end
 
+      def list(options = nil)
+        notes = Qiq::Note.all
+        @stdout.puts notes.map { |n| format_note(n) }.join("\n"*2)
+      end
+
       private
+
+        def format_note(note)
+          "Note *#{note.id}:\n#{note.content}"
+        end
 
         def check_found
           yield
