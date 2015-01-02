@@ -1,7 +1,8 @@
 class Qiq::Command
   describe Note do
     let(:stdout) { StringIO.new }
-    let(:note_cmd) { Note.new(stdout) }
+    let(:stderr) { StringIO.new }
+    let(:note_cmd) { Note.new(stdout, stderr) }
 
     let(:note) {
       {
@@ -88,6 +89,15 @@ class Qiq::Command
 
       it "writes the note to STDOUT" do
         expect(stdout.string).to match /Deleted note \*123/
+      end
+    end
+
+    describe "#check_found" do
+      it "writes error to STDOUT if 404 Not Found" do
+        note_cmd.send(:check_found) {
+          raise ActiveResource::ResourceNotFound.new("")
+        }
+        expect(stderr.string).to match /Note not found/
       end
     end
   end
