@@ -20,22 +20,55 @@ module Qiq
         c.syntax = 'qiq note [options]'
         c.summary = 'Create note'
 
+        # Print Note
+        #
+        c.option '-p', '--print NOTE_ID', 'Print a note' do |note_id|
+          @action = :print
+          @note_id = note_id
+        end
+
+        # Delete Note
+        #
+        c.option '-d', '--delete NOTE_ID', 'Delete a note' do |note_id|
+          @action = :delete
+          @note_id = note_id
+        end
+
+        # Update Note
+        #
+        c.option '-u', '--update NOTE_ID', 'Modify a note' do |note_id|
+          @action = :update
+          @note_id = note_id
+        end
+
+        # Note content options
+        #
         c.option '-e', '--editor [EDITOR]', 'Create note in text editor' do |editor|
           e = editor.is_a?(String) ? editor : nil
           @content = ask_editor('', e)
         end
-
+        #
         c.option '-c', '--content STRING', 'Note content' do |content|
           @content = content
         end
-
+        #
         c.option '-f', '--file FILE', 'Content from file' do |file|
           @content = File.open(file).read
         end
 
         c.action do |args, options|
-          @content ||= $stdin.read
-          Qiq::Command::Note.new.create(@content, options)
+          case @action
+          when :print
+            Qiq::Command::Note.new.print(@note_id, options)
+          when :delete
+            Qiq::Command::Note.new.delete(@note_id)
+          when :update
+            @content ||= $stdin.read
+            Qiq::Command::Note.new.update(@note_id, @content, options)
+          else #create
+            @content ||= $stdin.read
+            Qiq::Command::Note.new.create(@content, options)
+          end
         end
       end
 
