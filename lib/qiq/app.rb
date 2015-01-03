@@ -76,9 +76,44 @@ module Qiq
         c.syntax = 'qiq note list [options]'
         c.summary = 'List notes'
 
+        c.option '--ids', "Print only note's ids"
+
         c.action do |args, options|
-          STDOUT.puts "List notes"
-          Qiq::Command::Note.new.list
+          Qiq::Command::Note.new.list(options)
+        end
+      end
+
+      command :"note tag" do |c|
+        c.syntax = 'qiq note tag NOTE [options]'
+        c.summary = "Manage note's tags"
+
+        c.option '-a', '--add TAGS', "Add tags to a note" do |tags|
+          @action = :add_tags
+          @tags = tags.split(",")
+        end
+
+        c.option '-r', '--remove TAGS', "Remove tags from a note" do |tags|
+          @action = :remove_tags
+          @tags = tags.split(",")
+        end
+
+        c.option '-R', '--remove-all', "Remove all tags from a note" do
+          @action = :remove_all_tags
+        end
+
+        c.action do |args, options|
+          @note_id = args.shift
+
+          case @action
+          when :add_tags
+            Qiq::Command::Note.new.add_tags(@note_id, @tags)
+          when :remove_tags
+            STDOUT.puts "Remove tags #{@tags.join(", ")} from note *#{@note_id}"
+          when :remove_all_tags
+            STDOUT.puts "Remove all tags form note *#{@note_id}"
+          else #list_tags
+            STDOUT.puts "List all tags of *#{@note_id}"
+          end
         end
       end
 

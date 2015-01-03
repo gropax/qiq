@@ -1,20 +1,36 @@
-require "active_resource"
-
-class Bougle < ActiveResource::Base
-  self.site = "http://www.gropax.ninja"
-end
-
 module Qiq
   describe Note do
-    describe "#create" do
-      it "POST /notes.json" do
-        stub_request(:post, "www.gropax.ninja/bougles.json").to_return(status: 200)
+    before(:each) do
+      # POST notes.json
+      stub_request(:post, "#{Qiq::SERVER}/notes.json").
+        with(body: hash_including({content: "Content"})).
+        to_return(body: {id: 123, content: "Content", tags: []}.to_json)
+    end
 
-        Bougle.create({})
-        #uri = URI("http://www.gropax.ninja")
-        #Net::HTTP.post_form(uri, {})
+    let(:note) { Note.create({id: 123, content: "Content", tags: []}) }
 
-        expect(WebMock).to have_requested(:post, "www.gropax.ninja/bougles")
+    let(:tag) { Tag.new({id: 456, name: "bougle"}) }
+
+
+    describe "#add_tag" do
+      before(:each) do
+        # POST notes/123/tags.json
+        stub_request(:post, "#{Qiq::SERVER}/notes/123/tags.json").
+          with(body: hash_including({tag_id: 456}))
+        # GET notes/123.json
+        stub_request(:get, "#{Qiq::SERVER}/notes/123.json").
+          to_return(body: {id: 123, content: "Content", tags: [tag]}.to_json)
+
+        note.add_tag(tag)
+      end
+
+      it "requests POST /notes/:id/tags.json" do
+        expect(WebMock).to have_requested(:post, "#{Qiq::SERVER}/notes/123/tags.json").
+          with(body: hash_including({tag_id: 456}))
+      end
+
+      it "update the note's tag attribute" do
+        expect(note.tags).to eq [tag]
       end
     end
   end

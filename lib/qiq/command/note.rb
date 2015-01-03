@@ -34,9 +34,30 @@ module Qiq
         }
       end
 
-      def list(options = nil)
+      def list(options)
         notes = Qiq::Note.all
-        @stdout.puts notes.map { |n| format_note(n) }.join("\n"*2)
+
+        output = if options.ids
+          notes.map(&:id).join(",")
+        else
+          notes.map { |n| format_note(n) }.join("\n"*2)
+        end
+        @stdout.puts output
+      end
+
+      def add_tags(note_id, tag_names)
+        check_found {
+          note = Qiq::Note.find(note_id)
+
+          tags = tag_names.reject { |name|
+            note.tags.map(&:name).include?(name)
+          }.map { |name|
+            Tag.find_or_create(name)
+          }
+          tags.each { |t| note.add_tag(t) }
+
+          @stdout.puts "(Added tags #{tags.map(&:name).join(', ')} to note *#{note.id})"
+        }
       end
 
       private
